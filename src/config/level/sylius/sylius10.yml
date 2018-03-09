@@ -1,0 +1,13 @@
+# source: https://github.com/Sylius/Sylius/blob/master/UPGRADE-1.0.md#upgrade-from-100-beta3-to-100
+
+services:
+    Rector\Rector\Dynamic\ClassReplacerRector:
+        $oldToNewClasses:
+            'DateTime': 'DateTimeInterface'
+
+    Rector\Rector\Dynamic\ParentTypehintedArgumentRector:
+        $typehintForArgumentByMethodAndClass:
+            # Constructor of Sylius\Bundle\CoreBundle\Context\SessionAndChannelBasedCartContext has been changed to use Sylius\Component\Core\Storage\CartStorageInterface
+            'Sylius\Bundle\CoreBundle\Context\SessionAndChannelBasedCartContext':
+                '__construct':
+                    '$cartStorage': 'Sylius\Component\Core\Storage\CartStorageInterface'
