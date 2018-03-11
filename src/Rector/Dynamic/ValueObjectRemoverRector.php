@@ -149,7 +149,6 @@ final class ValueObjectRemoverRector extends AbstractRector
             return $node;
         }
 
-
         return null;
     }
 
@@ -215,7 +214,7 @@ final class ValueObjectRemoverRector extends AbstractRector
 
             return [
                 $nodeType,
-                $this->valueObjectsToSimpleTypes[$nodeType]
+                $this->valueObjectsToSimpleTypes[$nodeType],
             ];
         }
 
@@ -224,7 +223,8 @@ final class ValueObjectRemoverRector extends AbstractRector
 
     private function renameNullableInDocBlock(Node $node, string $oldType, string $newType): void
     {
-        $this->docBlockAnalyzer->replaceInNode($node,
+        $this->docBlockAnalyzer->replaceInNode(
+            $node,
             sprintf('%s|null', $oldType),
             sprintf('%s|null', $newType)
         );

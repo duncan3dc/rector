@@ -86,12 +86,7 @@ final class DocBlockAnalyzer
 
         $oldAnnotationPattern = preg_quote(sprintf('#@%s#', $oldAnnotation), '\\');
 
-        $newContent = Strings::replace(
-            $oldContent,
-            $oldAnnotationPattern,
-            '@' . $newAnnotation,
-            1
-        );
+        $newContent = Strings::replace($oldContent, $oldAnnotationPattern, '@' . $newAnnotation, 1);
 
         $doc = new Doc($newContent);
         $node->setDocComment($doc);
