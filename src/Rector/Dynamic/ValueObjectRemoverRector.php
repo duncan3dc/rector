@@ -133,7 +133,6 @@ final class ValueObjectRemoverRector extends AbstractRector
             }
 
             // SomeNamespace\SomeName - possibly used only part in docs blocks
-            $this->renameNullableInDocBlock($node, $oldType, $newType);
             $oldTypeParts = explode('\\', $oldType);
             $oldTypeParts = array_reverse($oldTypeParts);
 
@@ -144,6 +143,8 @@ final class ValueObjectRemoverRector extends AbstractRector
                 $this->renameNullableInDocBlock($node, $oldType, $newType);
                 $oldType .= '\\';
             }
+
+            dump($node->getDocComment());
 
             return $node;
         }
