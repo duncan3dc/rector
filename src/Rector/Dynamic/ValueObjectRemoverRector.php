@@ -81,12 +81,7 @@ final class ValueObjectRemoverRector extends AbstractRector
         }
 
         if ($node instanceof Name) {
-            $newType = $this->matchNewType($node);
-            if ($newType === null) {
-                return null;
-            }
-
-            return new Name($newType);
+            return $this->refactorName($node);
         }
 
         if ($node instanceof NullableType) {
@@ -201,7 +196,7 @@ final class ValueObjectRemoverRector extends AbstractRector
             /** @var ClassMethod $classMethodNode */
             $classMethodNode = $parentNode->getAttribute(Attribute::PARENT_NODE);
 
-            $this->renameNullableInDocBlock($classMethodNode, (string)$nullableTypeNode->type, $newType);
+            $this->renameNullableInDocBlock($classMethodNode, (string) $nullableTypeNode->type, $newType);
         }
 
         return new NullableType($newType);
@@ -210,7 +205,7 @@ final class ValueObjectRemoverRector extends AbstractRector
     private function refactorVariableNode(Variable $variableNode): Variable
     {
         $match = $this->matchOriginAndNewType($variableNode);
-        if (!$match) {
+        if (! $match) {
             return $variableNode;
         }
 
@@ -220,7 +215,7 @@ final class ValueObjectRemoverRector extends AbstractRector
 
         // @todo use right away?
         // SingleName - no slashes or partial uses => return
-        if (!Strings::contains($oldType, '\\')) {
+        if (! Strings::contains($oldType, '\\')) {
             return $variableNode;
         }
 
@@ -237,5 +232,15 @@ final class ValueObjectRemoverRector extends AbstractRector
         }
 
         return $variableNode;
+    }
+
+    private function refactorName(Node $nameNode): ?Name
+    {
+        $newType = $this->matchNewType($nameNode);
+        if ($newType === null) {
+            return null;
+        }
+
+        return new Name($newType);
     }
 }

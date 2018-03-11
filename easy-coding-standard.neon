@@ -75,3 +75,6 @@ parameters:
 
         # empty arguments passing
         - PHP_CodeSniffer\Standards\PEAR\Sniffs\Functions\ValidDefaultValueSniff.NotAtEnd
+
+        PHP_CodeSniffer\Standards\Generic\Sniffs\Metrics\CyclomaticComplexitySniff.MaxExceeded:
+            - src/Rector/Dynamic/ValueObjectRemoverRector.php
