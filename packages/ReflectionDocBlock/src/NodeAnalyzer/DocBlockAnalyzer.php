@@ -67,10 +67,12 @@ final class DocBlockAnalyzer
             return;
         }
 
-        $content = $node->getDocComment()->getText();
+        $docComment = $node->getDocComment();
+        $content = $docComment->getText();
+
         $newContent = Strings::replace($content, '#' . preg_quote($old, '#') . '#', $new, 1);
 
-        $doc = new Doc($newContent);
+        $doc = new Doc($newContent, $docComment->getLine(), $docComment->getFilePos(), $docComment->getTokenPos());
         $node->setDocComment($doc);
     }
 

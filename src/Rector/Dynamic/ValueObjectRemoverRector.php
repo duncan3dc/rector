@@ -199,7 +199,6 @@ final class ValueObjectRemoverRector extends AbstractRector
                 continue;
             }
 
-            dump($nodeType);
             return $this->valueObjectsToSimpleTypes[$nodeType];
         }
 
