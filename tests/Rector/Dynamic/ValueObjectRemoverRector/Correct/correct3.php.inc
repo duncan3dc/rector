@@ -8,7 +8,7 @@ class SomeValueObject
 
 class ActionClass
 {
-    public function someFunction(?string $name)
+    public function someFunction(?string $name): ?string
     {
     }
 }

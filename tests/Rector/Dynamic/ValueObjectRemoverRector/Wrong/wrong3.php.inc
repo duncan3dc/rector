@@ -8,7 +8,7 @@ class SomeValueObject
 
 class ActionClass
 {
-    public function someFunction(?SomeValueObject $name)
+    public function someFunction(?SomeValueObject $name): ?SomeValueObject
     {
     }
 }
