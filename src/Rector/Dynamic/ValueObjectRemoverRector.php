@@ -4,6 +4,7 @@ namespace Rector\Rector\Dynamic;
 
 use Nette\Utils\Strings;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
@@ -12,6 +13,7 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use Rector\Node\Attribute;
+use Rector\NodeTraverserQueue\BetterNodeFinder;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\Rector\AbstractRector;
 use Rector\ReflectionDocBlock\NodeAnalyzer\DocBlockAnalyzer;
@@ -34,16 +36,23 @@ final class ValueObjectRemoverRector extends AbstractRector
     private $nodeTypeResolver;
 
     /**
+     * @var BetterNodeFinder
+     */
+    private $betterNodeFinder;
+
+    /**
      * @param string[] $valueObjectsToSimpleTypes
      */
     public function __construct(
         array $valueObjectsToSimpleTypes,
         DocBlockAnalyzer $docBlockAnalyzer,
-        NodeTypeResolver $nodeTypeResolver
+        NodeTypeResolver $nodeTypeResolver,
+        BetterNodeFinder $betterNodeFinder
     ) {
         $this->valueObjectsToSimpleTypes = $valueObjectsToSimpleTypes;
         $this->docBlockAnalyzer = $docBlockAnalyzer;
         $this->nodeTypeResolver = $nodeTypeResolver;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
 
     public function isCandidate(Node $node): bool
@@ -211,12 +220,18 @@ final class ValueObjectRemoverRector extends AbstractRector
 
         [$oldType, $newType] = $match;
 
-        $this->renameNullableInDocBlock($variableNode, $oldType, $newType);
+        $exprNode = $this->betterNodeFinder->findFirstAncestorInstanceOf($variableNode, Expr::class);
+        $node = $variableNode;
+        if ($exprNode && $exprNode->getAttribute(Attribute::PARENT_NODE)) {
+            $node = $exprNode->getAttribute(Attribute::PARENT_NODE);
+        }
+
+        $this->renameNullableInDocBlock($node, $oldType, $newType);
 
         // @todo use right away?
         // SingleName - no slashes or partial uses => return
         if (! Strings::contains($oldType, '\\')) {
-            return $variableNode;
+            return $node;
         }
 
         // SomeNamespace\SomeName - possibly used only part in docs blocks
@@ -227,7 +242,7 @@ final class ValueObjectRemoverRector extends AbstractRector
         foreach ($oldTypeParts as $oldTypePart) {
             $oldType .= $oldTypePart;
 
-            $this->renameNullableInDocBlock($variableNode, $oldType, $newType);
+            $this->renameNullableInDocBlock($node, $oldType, $newType);
             $oldType .= '\\';
         }
 
